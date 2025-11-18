@@ -1,0 +1,11 @@
+name,description,base_price
+Cooler X100,"Industrial air cooling system, capacity 5 ton, 3-phase input, noise level <55 dB",120000
+Cooler X200,"High-capacity cooling unit 8 ton, 3-phase, energy efficient motor",180000
+Motor M3,"3-phase induction motor 10 HP, IP55 rating, standard mounting",15000
+Motor M5,"3-phase high torque motor 15 HP, low vibration, industrial grade",24000
+Compressor C200,"Reciprocating air compressor, 200 L/min, oil lubricated, heavy-duty frame",45000
+Compressor C350,"Rotary screw compressor, 350 L/min, 3-phase input, low noise",75000
+Pump P50,"Centrifugal water pump, 50 L/min, 2 inch inlet, corrosion resistant",8000
+Pump P100,"Industrial centrifugal pump, 100 L/min, 3 inch inlet, stainless steel impeller",12000
+ControlPanel CP1,"PLC-based control panel, supports Modbus communication, built-in safety interlocks",20000
+ControlPanel CP2,"Advanced PLC panel with HMI touchscreen, automation ready, multi-sensor support",35000

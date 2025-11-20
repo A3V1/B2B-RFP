@@ -6,9 +6,9 @@ pdfplumber
 python-docx
 sqlalchemy
 httpx
-openai
-sentence-transformers
 numpy
 jinja2
 python-dotenv
 pytest
+psycopg2-binary
+reportlab

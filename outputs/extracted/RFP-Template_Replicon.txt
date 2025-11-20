@@ -1,0 +1,366 @@
+REQUEST FOR PROPOSAL TEMPLATE
+This Request for Proposal (RFP) Template is free for you to copy and
+use on your project and within your organization. We hope that you
+find this template useful and welcome your comments. Public
+distribution of this document is only permitted from the Replicon
+official website at:
+www.replicon.com
+REQUEST FOR PROPOSAL (RFP)
+<PROJECT NAME>
+<COMPANY LOGO>
+COMPANY NAME
+STREET ADDRESS
+CITY, STATE ZIP CODE
+DATE
+1 Introduction
+<<Your Company Overview>>
+This Request for Proposal (RFP) is to invite prospective vendors to submit a proposal to provide
+<<XYZ>> system to <<Company Name>>. The RFP provides vendors with the relevant operational,
+performance, application, and architectural requirements that the system must fulfill.
+This document describes the Request for Proposal (RFP) from <<Company Name>>. This document is
+a company confidential document. Vendors requested for proposal are engaged to respect the
+confidentiality of information contained in this document.
+Rules for tendering this RFP are explained in Section 2.
+1.1 Purpose of the RFP
+<<Company Name>>is selecting a solution/service provider for a <<XYZ>>system. Our objective is to
+select the vendor who most fully meets the requirements identified in this Request for Proposal
+(RFP). <<Company Name>> may elect to award a contract pursuant to the RFP. Your company is
+invited to take part in this process and provide a proposal that satisfies <<Company Name>>
+requirements.
+Within the RFP you will find all the information necessary to do a proper assessment of <<Company
+Name>> requirements. Service providers are invited to respond to this RFP by describing how they
+can meet the requirements set out in this RFP and by providing other information requested.
+Responses to this RFP will be used to qualify service providers for the final evaluation and price
+negotiation phases of the selection process.
+1.2 Scope of Work
+<Please include a short introduction about the objective of the project, expected deliverables, etc.>.
+This could cover the following:
+• project goals
+• objectives
+• deliverables
+• scope
+• stakeholders / number of employees
+• Other basic information about the project
+1.3 Confidentiality
+This Request for Proposal, including any other material and information provided by <<Company
+Name>>, contains <<Company Name>>proprietary and confidential information that is provided to
+you for your exclusive use in evaluating and preparing your response. If at any time your company
+decides not to respond to the RFP, please destroy any copies of the document and confirm your
+non-­‐participation either in writing or by email.
+This document should not be duplicated except as necessary to prepare your response. This
+document should not be disclosed or distributed to any third party. All copies of this document
+except one file copy should be destroyed following submission of your response. The file copy
+should be held confidential and not used for any purpose other than bid evaluation, response
+preparation, and subsequent discussions with <<Company Name>>, if any result. You should
+safeguard the confidentiality of this document and any copies with the same degree of care with
+which you safeguard your own confidential information. Vendors may not use the name, logo, or
+trademarks of <<Company Name>>in connection with any advertising or publicity materials or
+activities without the prior written consent of the <<Company Name>>. The obligation not to
+disclose any confidential information shall not be affected by bankruptcy, receivership, assignment,
+attachment or seizure procedures, whether initiated by or against the vendor, nor by the rejection of
+any agreement between the <<Company Name>>and the vendor, by a trustee of the vendor in
+bankruptcy, or by the vendor as a debtor-­‐in-­‐possession or the equivalent of any of the foregoing
+under local law.
+2 Vendor Instructions
+2.1 Background
+This RFP has been issued to organizations that will respond satisfactorily to the Request for
+Proposals (RFP) dated <<DATE>>. The RFP identifies <<Company Name>>’s requirements in
+sufficient detail in order to identify a preferred vendor.
+2.2 General Instructions
+Vendors are requested to consider the following instructions when preparing their responses:
+• Only respondents who have been directly invited to respond to this RFP shall be considered.
+• Vendor responses must be valid for 6 months from the date of submission.
+• Vendors must be commercially bound to their response.
+• Vendors must address all matters raised in this RFP.
+• Any statements made about the performance and specifications of the proposed solution
+will be considered to be true and will be incorporated into the final purchase contract.
+• Any functionality or features not included in the cost estimate must be clearly identified in
+the response to the RFP.
+• Vendors must address all items specified in this RFP. Failure to adhere to the specified
+format may disqualify a vendor from further consideration.
+Submission of proposals shall constitute evidence that the vendor has made all the above-­‐
+mentioned examinations, and is free of any uncertainty with respect to conditions that would affect
+the execution, and completion of this project.
+2.3 RFP Changes, Binding Bid Process
+<<Company Name>>reserves the right to negotiate any or all RFP terms and conditions, and to
+cancel, amend or resubmit this RFP in part or entirety at any time. This RFP has been issued
+exclusively for providing adequate information about <<XYZ>> System requirements for <<Company
+Name>>in order to receive a proposal of this project from vendors. While one or more vendors may
+be selected as candidates, and <<Company Name>> may negotiate a vendor contract with one
+or more respondents, <<Company Name>> reserves the right to reject any or all of the responses
+received for any reason or no reason, and to decline negotiating and signing a vendor contract with
+any vendors responding to the RFP regardless of whether any vendor's response is partially or fully
+accepted or rejected, or contains the highest or lowest mark-­‐up or price, or the most timely services
+delivery commitment, or whether a vendor responds with a no-­‐response notice or has an existing
+contract with <<Company Name>>, and regardless of any other matter. <<Company Name>> further
+reserves the right to negotiate with any vendor who does not receive this RFP. Accordingly
+responses should be submitted in the terms most favorable to <<Company Name>>. <<Company
+Name>> will consider vendor responses as binding offers by vendors.
+2.4 Disqualification
+Statements known to be, or subsequently found to be, inaccurate or misleading may disqualify the
+vendor from further participation in the evaluation process.
+2.5 Structure of the Response
+All responses to this proposal must follow the structure given below:
+1. Executive Summary
+2. Company Profile
+(Describe your organization’s core businesses, products, services, markets, awards, etc.)
+4. Requirements Understanding / Scope of Work
+(Please illustrate that you have understood our requirements.)
+5. Vendor Eligibility Criteria (as per section 3 of RFP)
+6. Compliance Matrix (as per section 4 of RFP)
+7. Proposed Solution Description with screenshots of the interface
+8. Implementation Approach / Deliverables / Training Details
+9. Post Implementation Support / SLA
+10. Project Plan / Timelines
+11. Project Management Approach
+(Please illustrate your project management approach in terms of proposed team structure,
+communication plan, escalation management, quality plan and any other relevant information)
+12. Pricing Details (as per format in section 5 of the RFP)
+2.6 Schedule of Events
+Event Date
+RFP Distribution to Vendors
+Written Confirmation of Vendors with Bid Intention
+Questions from Vendors about scope or approach due
+Responses to Vendors about scope or approach due
+Proposal Due Date
+Target Date for Review of Proposals
+Onsite Oral Presentation / Demo of the proposed solution
+Final Vendor Selection Discussion(s)-­‐-­‐Week of
+Anticipated decision and selection of Vendor(s)
+Anticipated commencement date of work
+Anticipated completion of work
+2.7 Contacts
+Any questions concerning technical specifications or Statement of Work (SOW) or contractual terms
+& conditions must be directed to:
+Name
+Address
+Phone
+FAX
+Email
+Responses to the RFP are due by <<DATE>>. Please submit your response in <<hard copy / soft
+copy>>to:
+Name
+Address
+Phone
+FAX
+Email
+2.8 Evaluation Criteria
+Any award to be made pursuant to this RFP will be based upon the proposal with appropriate
+consideration given to operational, technical, cost, and management requirements. Evaluation of
+offers will be based upon the Vendor’s responsiveness to the RFP and the total price quoted for all
+items covered by the RFP.
+Proposals must address all the items identified in the Request. All proposals will be evaluated based
+on the following criteria:
+● Completeness of proposal
+● Experience and past performance with similar customers
+● Ability to meet requirements as specified in the Compliance Matrix
+● Initial cost, including goods and services, yearly maintenance fee, and any recurring costs
+● Financial stability of your company
+● Demonstrated quality of service and training
+● Flexibility of product
+● Oral presentation
+<<Company Name>> does not represent that these are the sole criteria and reserves the right to
+adjust selection criteria at any time.
+2.9 Awarding of Contract
+<<Company Name>> is not bound to accept the lowest proposal and is not obliged to give a reason
+for rejecting a proposal. Prospective suppliers are advised that nothing in this documentation, or in
+any communication between <<Company Name>> and any other party, shall be taken as
+constituting a contract, agreement or representation between <<Company Name>> and/or any
+other party, except for a formal award of contract made in writing by <<Company Name>>. Neither
+shall it, or they, be taken as constituting a contract, agreement or representation that a contract
+shall be offered.
+Please note that <<Company Name>> reserves the right to vary the number of vendors invited to
+interviews and presentations, or dispense completely with this part of the process, at its sole
+discretion. <<Company Name>> reserves the right at all points in the procurement process either
+not to select a candidate to go forward to the next stage, or following completion of the
+procurement process, not to make any award of contract.
+<<Company Name>> has prepared this RFP in good faith. To the extent that <<Company Name>> is
+permitted by law, <<Company Name>> excludes any liability (whether in contract, negligence or
+otherwise) for any incorrect or misleading information contained in this RFP.
+3 Vendor Eligibility Criteria
+<<Below are a few sample eligibility criteria, please incorporate/modify as per your specific
+requirements>>
+• Vendor is defined as an independent company registered in 'country name' or a consortium
+of partnership between a local 'country name' registered company and local or global
+services partner. Please provide the following details:
+o Legal Name:
+o Parent Company:
+o Corporate Headquarter Address:
+o Internet Address:
+o In what business area has your company engaged?
+o How many years has your company been in business under its present name?
+o If you are a corporation or limited liability corporation, show state and date of
+incorporation.
+o Is there, or has there been in the last three years, any litigation or governmental or
+regulatory action pending or threatened against your organization that might affect
+your ability to provide stated products and services? State the status of any current
+or pending lawsuits.
+• The business enterprise must currently be incorporated, or registered as a
+company(corporation, limited, partnership) and be able to demonstrate that it has been and
+is offering goods/services under the business name for a period not less than 5 years. Sole
+Proprietors/Independent Contractors must be able to demonstrate that they have been
+engaged in their business activity for not less than 5 years.
+• Minimum amount of yearly turnover of the company/vendor during the last three years i.e.
+for 2010-­‐11, 2011-­‐12, 2012-­‐13 should be at least <<$$>>.
+• The vendor should have the experience of providing cloud based solutions/services for at
+least 5 years.
+• Vendor security policies and processes should have been ratified, evaluated and rated by a
+reputed third party analyst firm such as Gartner/Forrester, please provide details.
+• Vendor should have experience of implementing and providing services using cloud based
+<<XYZ>>Tools in at least 3 organizations in 'country name' and 5 organizations in 'region
+name'; references should be provided for the same.
+• Vendor must have the experience of integrating the proposed <<XYZ>> tool with other third
+party applications such as QuickBooks, MS Project, PeopleSoft, SAP etc. for unidirectional /
+bidirectional communication as per requirement to automate the entire process. Please
+provide details with customer references to substantiate.
+• The SaaS provider will need to provide sufficient evidence that its platforms will scale to
+meet current peak and future application processing and user demands through the use of
+customer references with similar requirements. SaaS vendors with a good track record will
+be able to provide and guarantee response times with the required service levels.
+• Vendor controls and processes should be SSAE16 compliant. Please attach certificate/report.
+• Vendor providing remotely hosted / SaaS based offerings should host the solution in a Tier 4
+data center and maintain a separate disaster recovery site, please provide details.
+• We have a strong commitment and preference to the consideration and use of certified
+minority and women-­‐owned businesses (M/WBE’s) to the greatest extent possible. Bidder
+shall provide details, if applicable.
+The eligibility will be seen based on the above criteria and <<Company Name>> has the right to
+reject responses not meeting the qualification criteria.
+4 Compliance Matrix
+In the subsequent sections, we have detailed the specifications for the various components of the
+requirement. Vendors must highlight their compliance status against each requirement or
+specification in their response along with additional comments (if any) by using the following legend:
+S = Standard
+N = Not Available
+Solution Features C = Available with Customization
+T = Available through 3rd-­‐party
+4.1 Technical/Functional
+Sr. Requirements S/N/C/T Additional
+No. Remarks
+1 The system must allow minimum working hours to be defined for all or
+some users
+2 The system must allow different working patterns, to cater for part-­‐time
+and other flexible working arrangements, for some or all users
+3 The system must allow user accounts to be suspended and re-­‐instated
+4 The system must allow for different overtime categories to be defined
+(single time, double time, etc)
+5 The system must allow an employee's contracted hours to be defined
+6 Pre-­‐population of timesheets based on project allocations
+7 The System must allow user to copy forward historical pattern of work
+to pre-­‐populate future weeks
+8 The System must be able to save data without submitting for approval
+9 The System must have an escalation process in place to flag via email or
+workflow, that time has not been approved by the approving manager.
+Approvers must be clearly prompted which approvals are missing when
+they access the system. Similarly, users should be reminded via email
+notifications from the system if timesheet is due or overdue.
+10 Option to define approval paths up to minimum five levels deep
+11 The system must allow a different approval path to be defined for each
+user
+12 Manager should be able to approve or Reject the request directly from
+the email or the tool. In case the Manager rejects the request, a
+comment field should be available to mention the reason.
+13 Approvers must be able to select a deputy to approve in their absence
+from the approved list.
+14 Users must be able to nominate another user to act as their deputy in
+case of absence etc.
+15 The system must allow administrators to restrict who can act as a deputy
+/ substitute.
+16 System data should be available for download and analysis
+17 System should allow creation of extensive overtime rules as per company
+/ state policy and should also provide out of the box templates.
+18 The system should ensure compliance with built-­‐in/customizable alerts,
+emails, and approval capabilities; providing what is needed for
+government audits such as DCAA, SOX, etc.
+4.2 Security / Hosting
+Sr. Requirements S/N/C/T Additional
+No. Remarks
+1 Users must not be able to view any staff records other than their own.
+2 The system must provide adequate security to prevent unauthorized
+access
+3 The system must provide the facility for passwords to be changed, and
+for the administrator to configure the frequency with which this should
+occur as well as setting up password constraints.
+4 Ability to sign in using password authentication that is synchronized with
+the firm’s Active Directory services
+5 Support for deployment of Single Sign-­‐on (SSO) with SAML
+6 The system must allow for encryption of information both inbound and
+outbound.
+7 The system must provide an automatic time-­‐out facility to prevent users
+remaining logged in when their sessions are inactive.
+8 The security features provided in the system and by the hosting facility
+should be compliant with the relevant industry recognized security
+standards. Please provide details along with supporting documents.
+9 The system must be externally hosted and supported within a jurisdiction
+with appropriate Data Protection legislation.
+10 The system must have an uptime of at least 99.5%. Please provide
+supporting evidence with your response.
+4.3 Performance
+Sr. Requirements S/N/C/T Additional
+No. Remarks
+1 Please describe how your solution scales from an infrastructure
+perspective.
+2 Please describe how your solution's performance scales with the number
+of concurrent users/sessions online? Does geographic distribution of
+users affect performance? Please describe.
+3 How do you deal with unexpected peaks in demand/usage? Please
+include details on whether other customers can affect performance of
+the environment if shared.
+4 The system must provide sub-­‐second response times, as visible to the
+user, operating over a domestic broadband connection, at least 97% of
+the time.
+5 The same system must be able to seamlessly scale to cope with initial
+volume of users (approx. 500) and any additional volume of users
+without replacing the system.
+4.4 Integration
+Sr. Requirements S/N/C/T Additional
+No. Remarks
+1 Real-­‐time integrations can be built to almost any other software
+solution
+2 Experience of the vendor and ease of integration with QuickBooks,
+PeopleSoft, MS Project, etc.
+3 API/Web Services availability
+4.5 Reporting
+Sr. Requirements S/N/C/T Additional
+No. Remarks
+1 The system must provide a mixture of pre-­‐configured and user-­‐
+defined Management Information reports
+2 The system must allow standard and customized reports against
+current and archived data.
+3 The system should allow saving of user-­‐defined reports for future
+use.
+10 | P a g e
+4 The system must allow all viewable reports to be printed and
+produced in electronic form.
+5 Automated reports that can be e-­‐mailed to recipients based upon a
+preset schedule
+4.6 Others
+Sr. Requirements S/N/C/T Additional
+No. Remarks
+1 The system should be capable of being accessed from any internet
+device, including mobile devices
+2 The system must be able to run on supported versions of Internet
+Explorer, Chrome, Firefox and Safari
+3 The system should not require installation of applets or controls to
+run on a client
+4 The system ideally will have a built-­‐in help function
+5 Upgrades/updates to the system should be frequent (weekly/bi
+weekly) and should be handled by the vendor without any
+downtime.
+6 The vendor should be able to provide software administrative
+training to key staff
+7 System should support English and local language where legally
+required
+8 Vendor should provide 24x7x365 support services with a real person
+to assist when needed, please provide details.
+5 Pricing Details
+All prices quoted by the vendor must be fully itemized, in <<currency name>>, and inclusive of all
+taxes and all expenses. <<Company Name>> expects to contract with the vendor on a Fixed Price
+basis for all components of the supply. We expect the vendor to quote a fixed price for:
+• Product
+• Implementation services
+• Customizations
+• All software licenses for the vendor’s products
+• All software licenses for third party products supplied by the Vendor
+• Support fees for one (1) year commencing from date of go-­‐live
+Please clearly identify all assumptions made when producing these prices.
+11 | P a g e

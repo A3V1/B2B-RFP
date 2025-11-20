@@ -1,0 +1,8 @@
+.env
+db.py
+__pycache__/
+*.pyc   
+upload_result.json
+.claude/settings.local.json
+.claude/settings.json
+/uploads

@@ -1,0 +1,101 @@
+name,description,keywords,price
+Component 001,High-efficiency centrifugal pump suitable for water and light chemicals,pump centrifugal;water;chemical,1250.00
+Component 002,Industrial air-cooled chiller 5 ton capacity,chiller;cooling;5 ton,9800.00
+Component 003,Three-phase variable frequency drive for motor control,VFD;motor;drive,450.00
+Component 004,Networked color laser printer with duplex unit,printer;color;duplex,650.00
+Component 005,Commercial grade UPS 10kVA,ups;power;backup,4200.00
+Component 006,Industrial centrifugal fan with silencers,fan;ventilation;noise,900.00
+Component 007,Oil-lubricated rotary compressor for heavy duty,compressor;rotary;oil,3200.00
+Component 008,RO water filtration system 1000 L/h,water;ro;filtration,2400.00
+Component 009,High precision flow meter for liquids,flow meter;instrumentation,780.00
+Component 010,Stainless steel piping set for pump installation,piping;stainless;plumbing,560.00
+Component 011,Low-noise axial fan for server racks,fan;axial;server,120.00
+Component 012,Modular server rack 42U with cable management,rack;server;42U,520.00
+Component 013,Industrial PLC controller with I/O expansion,plc;controller;i/o,1450.00
+Component 014,Explosion-proof junction box for hazardous areas,box;junction;explosion-proof,230.00
+Component 015,High-temp gasket set for pumps and flanges,gasket;seal;high-temp,45.00
+Component 016,Inline water heater 12kW for process heating,heater;water;12kW,980.00
+Component 017,High-efficiency LED floodlights for industrial sites,lighting;led;floodlight,75.00
+Component 018,Commercial boiler 200kW with controls,boiler;heat;200kW,12500.00
+Component 019,Precision temperature sensor PT100,temperature;sensor;pt100,38.00
+Component 020,Acoustic enclosure for noisy equipment,sound;acoustic;enclosure,680.00
+Component 021,Industrial grade conveyor belt 2m with motor,conveyor;belt;material,1550.00
+Component 022,Hydraulic cylinder 100mm bore,hydraulic;cylinder;actuator,340.00
+Component 023,High capacity battery bank for telecom,batery;battery;bank,2200.00
+Component 024,Fire suppression system (FM200) for server rooms,fire;suppression;fm200,4500.00
+Component 025,Chemical dosing pump with controller,dosing;chemical;pump,310.00
+Component 026,Air filtration HEPA unit for cleanrooms,filter;HEPA;air,890.00
+Component 027,Industrial scale 2000kg with digital readout,scale;weighing;industrial,420.00
+Component 028,Variable speed blower assembly,blower;vfd;speed,760.00
+Component 029,High-pressure hose assembly 10m,hydraulic;hose;high-pressure,120.00
+Component 030,Stainless steel storage tank 2000L,tank;stainless;storage,4200.00
+Component 031,Industrial thermometer with remote probe,thermometer;probe;remote,65.00
+Component 032,Control panel NEMA 4 for outdoor use,control;panel;nema4,750.00
+Component 033,Pressure relief valve set 10 bar,valve;pressure;relief,95.00
+Component 034,Slip ring assembly for rotating equipment,slip ring;rotating;assembly,480.00
+Component 035,PLC to cloud gateway for remote monitoring,iot;plc;gateway,520.00
+Component 036,Corrosion-resistant coating for steel surfaces,coating;corrosion;protection,18.00
+Component 037,High-capacity air dryer for compressed air system,dryer;compressed air;desiccant,1250.00
+Component 038,Industrial-grade circuit breaker 400A,circuit breaker;electrical;400A,420.00
+Component 039,Programmable thermostat for HVAC systems,thermostat;hvac;programmable,85.00
+Component 040,Inline filter for hydraulic oil 10 micron,filter;hydraulic;10um,60.00
+Component 041,Safety guarding panels for conveyors,safety;guard;panel,220.00
+Component 042,Handheld barcode scanner USB,barcode;scanner;usb,45.00
+Component 043,High-precision laser distance sensor,laser;distance;sensor,320.00
+Component 044,Industrial camera for machine vision,camera;vision;industrial,950.00
+Component 045,PLC programming service (per day),service;plc;engineering,650.00
+Component 046,On-site commissioning and testing (per day),service;commissioning;testing,720.00
+Component 047,Remote monitoring subscription (monthly),service;remote;monitoring,120.00
+Component 048,Spare parts kit for centrifugal pump (set),spare;pump;kit,210.00
+Component 049,Stainless steel fastener kit (bolts/nuts),fastener;stainless;kit,35.00
+Component 050,Insulation blankets for process piping,insulation;piping;blanket,180.00
+Component 051,Variable frequency pump controller (IP65),vfd;pump;ip65,540.00
+Component 052,Acid-resistant pump for chemical dosing,acid;chemical;pump,2600.00
+Component 053,Wireless sensor node for temperature and humidity,wireless;sensor;temp-hum,95.00
+Component 054,High-flow solenoid valve 2" (inch),valve;solenoid;2in,160.00
+Component 055,Corrosion monitoring probe for tanks,probe;corrosion;monitor,220.00
+Component 056,Industrial-grade touchscreen HMI 7",hmi;touchscreen;7in,420.00
+Component 057,Heavy-duty caster set for mobile equipment, caster;mobile;heavy-duty,60.00
+Component 058,Explosion-proof light fixture for hazardous zones,lighting;explosion-proof;hazard,350.00
+Component 059,Inline pH sensor with transmitter,pH;sensor;transmitter,410.00
+Component 060,Magnetic flow meter for conductive fluids,flow meter;magnetic;conductive,1250.00
+Component 061,High temperature insulation material (per m2),insulation;high-temp;material,22.50
+Component 062,Precision pressure transmitter 0-10bar,pressure;transmitter;0-10bar,220.00
+Component 063,Motor coupling flexible type,coupling;motor;flexible,80.00
+Component 064,Servicing kit for compressors (annual),service;compressor;kit,420.00
+Component 065,Industrial grade Ethernet switch 8-port,switch;ethernet;8port,210.00
+Component 066,High-efficiency heat exchanger plate type,heat exchanger;plate;efficiency,3300.00
+Component 067,Acoustic foam panels for noise mitigation,acoustic;foam;noise,45.00
+Component 068,Manual transfer switch for backup power,transfer switch;manual;backup,390.00
+Component 069,High-precision load cell 5t,load cell;weighing;5t,980.00
+Component 070,Inline strainer with stainless mesh,strainer;inline;stainless,120.00
+Component 071,Industrial-grade lubrication oil 20L,oil;lubrication;20L,85.00
+Component 072,Explosion-proof junction box cable gland set,cable gland;junction;explosion,25.00
+Component 073,Remote I/O modules for fieldbus systems,remote io;fieldbus;module,280.00
+Component 074,High-performance bearings set for pumps,bearing;pump;set,140.00
+Component 075,Acid-resistant lining for tanks (sqm),lining;acid;resistant,55.00
+Component 076,Variable area flow meter (rotameter),rotameter;flow;variable-area,90.00
+Component 077,Industrial humidifier unit for large halls,humidifier;industrial;large,1500.00
+Component 078,Automatic filter backwash system for water,filter;backwash;automatic,2200.00
+Component 079,Control valves with positioner for flow control,valve;control;positioner,480.00
+Component 080,High-visibility safety clothing kit,safety;clothing;high-visibility,35.00
+Component 081,Industrial lighting control panel with sensors,lighting;control;panel,620.00
+Component 082,Chemical-resistant piping fittings 1",fittings;chemical;1in,12.00
+Component 083,Industrial-grade thermometer data logger,logger;temperature;data,220.00
+Component 084,Automated sampling valve for liquid streams,sampling;valve;liquid,180.00
+Component 085,High-flow centrifugal pump 50m3/h,pump;centrifugal;50m3h,4200.00
+Component 086,Insulated piping set for chilled water,insulation;piping;chilled,780.00
+Component 087,Industrial pressure washer 3000 PSI,washer;pressure;3000psi,920.00
+Component 088,Stainless steel filter housing 2" inlet,filter;housing;stainless,260.00
+Component 089,High-capacity cooling tower fan assembly,cooling;tower;fan,5400.00
+Component 090,Automated conveyor diverter mechanism,conveyor;diverter;automation,1320.00
+Component 091,Industrial-grade scale conveyor 1m,conveyor;scale;industrial,2200.00
+Component 092,Acoustic measurement service (per day),service;acoustic;measurement,700.00
+Component 093,Heat-traced piping cables with thermostat,heat trace;cable;thermostat,95.00
+Component 094,High-efficiency particulate filter (HEPA H14),filter;HEPA;H14,110.00
+Component 095,Remote SCADA integration (project-based),service;scada;integration,4200.00
+Component 096,Portable vibration analyzer for rotating equipment,analyzer;vibration;portable,1250.00
+Component 097,Replacement mechanical seal kit for pump,seal;mechanical;kit,95.00
+Component 098,Industrial-grade solvent-resistant hoses,hoses;solvent;resistant,180.00
+Component 099,On-site training course for operators (per day),service;training;onsite,650.00
+Component 100,OEM warranty extension (1 year),service;warranty;extension,220.00

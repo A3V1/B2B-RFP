@@ -12,3 +12,9 @@ python-dotenv
 pytest
 psycopg2-binary
 reportlab
+
+# LangGraph for workflow orchestration
+langgraph
+
+# Google Gemini AI
+google-generativeai

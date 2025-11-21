@@ -3,7 +3,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
 
-# routes live under app.v1 (not app.api.v1) in this project layout
 from app.v1 import routes
 from app.config import settings
 from app.db.base import init_db, get_engine
@@ -25,7 +24,7 @@ def startup():
 @app.get("/")
 def home():
     """Serve the HTML upload interface"""
-    html_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "index.html")
+    html_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "dashboard.html")
     if os.path.exists(html_path):
         return FileResponse(html_path)
     return {"status": "ok", "message": "API is running. Visit /docs for API documentation."}

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFP Automation Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-bolt"></i>
+                <span>RFP Automation</span>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Main Menu</div>
+                <div class="nav-item active" onclick="showView('upload')"><i class="fas fa-cloud-upload-alt"></i><span>Upload RFP</span></div>
+                <div class="nav-item" onclick="showView('analyze')"><i class="fas fa-robot"></i><span>AI Analysis</span></div>
+                <div class="nav-item" onclick="showView('results')"><i class="fas fa-chart-bar"></i><span>Results</span></div>
+                <div class="nav-item" onclick="showView('proposal')"><i class="fas fa-file-alt"></i><span>Proposal</span></div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Recent RFPs</div>
+                <div class="rfp-history" id="rfpHistory">
+                    <div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px;">No RFPs uploaded yet</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- Upload View -->
+            <div class="view active" id="view-upload">
+                <div class="page-header"><h1 class="page-title">Upload RFP Document</h1></div>
+
+                <div class="card">
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <div class="upload-text">Drop your RFP document here</div>
+                        <div class="upload-hint">or click to browse (PDF, DOCX)</div>
+                        <input type="file" id="fileInput" accept=".pdf,.docx,.doc" hidden>
+                    </div>
+
+                    <div class="file-preview hidden" id="filePreview">
+                        <i class="fas fa-file-pdf"></i>
+                        <div class="file-info">
+                            <div class="file-name" id="fileName">document.pdf</div>
+                            <div class="file-size" id="fileSize">2.5 MB</div>
+                        </div>
+                        <button class="btn btn-secondary" onclick="clearFile()"><i class="fas fa-times"></i> Remove</button>
+                    </div>
+
+                    <div style="margin-top: 24px; text-align: right;">
+                        <button class="btn btn-primary" id="uploadBtn" disabled onclick="uploadFile()"><i class="fas fa-upload"></i> Upload & Extract</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analyze View -->
+            <div class="view" id="view-analyze">
+                <div class="page-header">
+                    <h1 class="page-title">AI Analysis Pipeline</h1>
+                    <button class="btn btn-primary" id="analyzeBtn" onclick="runAnalysis()"><i class="fas fa-play"></i> Start Analysis</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-project-diagram"></i> Agent Pipeline</div>
+                    <div class="pipeline-container">
+                        <div class="agent-node waiting" id="agent-parser"><div class="agent-icon">📄</div><div class="agent-name">Parser</div></div>
+                        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+                        <div class="agent-node waiting" id="agent-analyzer"><div class="agent-icon">🔍</div><div class="agent-name">Analyzer</div></div>
+                        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+                        <div class="agent-node waiting" id="agent-matcher"><div class="agent-icon">🔗</div><div class="agent-name">Matcher</div></div>
+                        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+                        <div class="agent-node waiting" id="agent-scorer"><div class="agent-icon">📊</div><div class="agent-name">Scorer</div></div>
+                        <div class="pipeline-arrow"><i class="fas fa-chevron-right"></i></div>
+                        <div class="agent-node waiting" id="agent-response"><div class="agent-icon">📝</div><div class="agent-name">Response</div></div>
+                    </div>
+                </div>
+
+                <div class="results-grid">
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-cog"></i> Current Status</div>
+                        <div id="analysisStatus" style="padding: 20px; text-align: center; color: var(--text-muted);">Select an RFP and click "Start Analysis"</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-terminal"></i> Agent Log</div>
+                        <div id="agentLog" style="background: var(--black); padding: 16px; border-radius: 8px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+                            <div style="color: var(--text-muted);">Waiting for analysis to start...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results View -->
+            <div class="view" id="view-results">
+                <div class="page-header">
+                    <h1 class="page-title">Analysis Results</h1>
+                    <button class="btn btn-secondary" onclick="exportResults('json')"><i class="fas fa-download"></i> Export JSON</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-list"></i></div><div class="stat-value" id="stat-sections">0</div><div class="stat-label">Sections Found</div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-tasks"></i></div><div class="stat-value" id="stat-requirements">0</div><div class="stat-label">Requirements</div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-value" id="stat-matched">0</div><div class="stat-label">Matched</div></div>
+                    <div class="stat-card"><div class="stat-icon"><i class="fas fa-percentage"></i></div><div class="stat-value" id="stat-score">0%</div><div class="stat-label">Match Score</div></div>
+                </div>
+
+                <div class="card">
+                    <div class="tabs">
+                        <button class="tab active" onclick="showResultTab('overview')">Overview</button>
+                        <button class="tab" onclick="showResultTab('requirements')">Requirements</button>
+                        <button class="tab" onclick="showResultTab('matches')">Matches</button>
+                        <button class="tab" onclick="showResultTab('recommendations')">Recommendations</button>
+                    </div>
+
+                    <div class="tab-content active" id="rtab-overview">
+                        <div class="results-grid">
+                            <div><h4 style="margin-bottom: 16px;">Score Breakdown</h4><div id="scoreBreakdown"><div style="color: var(--text-muted);">Run analysis to see breakdown</div></div></div>
+                            <div>
+                                <h4 style="margin-bottom: 16px;">Overall Score</h4>
+                                <div class="score-circle-container">
+                                    <div class="score-circle" style="--score: 0" id="scoreCircle"><span class="score-value" id="scoreValue">0%</span></div>
+                                    <div class="score-label" id="scoreLabel">No data</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="rtab-requirements"><div id="requirementsList"><div style="color: var(--text-muted); text-align: center; padding: 40px;">Run analysis to see extracted requirements</div></div></div>
+                    <div class="tab-content" id="rtab-matches"><div id="matchesList"><div style="color: var(--text-muted); text-align: center; padding: 40px;">Run analysis to see component matches</div></div></div>
+                    <div class="tab-content" id="rtab-recommendations"><div id="recommendationsList"><div style="color: var(--text-muted); text-align: center; padding: 40px;">Run analysis to see recommendations</div></div></div>
+                </div>
+            </div>
+
+            <!-- Proposal View -->
+            <div class="view" id="view-proposal">
+                <div class="page-header">
+                    <h1 class="page-title">Generated Proposal</h1>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-secondary" onclick="exportProposal('txt')"><i class="fas fa-file-alt"></i> Export TXT</button>
+                        <button class="btn btn-primary" onclick="exportProposal('pdf')"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                    </div>
+                </div>
+
+                <div class="results-grid">
+                    <div class="card"><div class="card-title"><i class="fas fa-file-signature"></i> Proposal Summary</div><div class="proposal-editor" id="proposalSummary">Run analysis to generate proposal...</div></div>
+                    <div class="card"><div class="card-title"><i class="fas fa-cogs"></i> Technical Response</div><div class="proposal-editor" id="technicalResponse">Run analysis to generate technical response...</div></div>
+                </div>
+
+                <div class="card"><div class="card-title"><i class="fas fa-rupee-sign"></i> Commercial Response</div><div class="proposal-editor" id="commercialResponse">Run analysis to generate commercial response...</div></div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMessage">Success!</span></div>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

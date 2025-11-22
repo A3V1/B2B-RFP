@@ -206,6 +206,208 @@ body {
 .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .result-title { font-weight: 600; font-size: 14px; }
 .result-score { background: var(--orange); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; color: var(--black); }
+
+/* Spec tags for requirements display */
+.spec-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+}
+.spec-tag.matched {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--success);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.spec-tag.unmatched {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Unified Proposal Document Styles */
+.proposal-document {
+    background: var(--navy);
+    border-radius: 8px;
+    padding: 32px;
+    min-height: 400px;
+}
+
+.proposal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 3px solid var(--orange);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.proposal-logo {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--orange);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.proposal-meta {
+    text-align: right;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.proposal-meta div {
+    margin-bottom: 4px;
+}
+
+.proposal-section {
+    margin-bottom: 32px;
+}
+
+.proposal-section .section-title {
+    font-size: 18px;
+    color: var(--orange);
+    border-bottom: 1px solid var(--blue);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.proposal-section .section-content {
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.proposal-section .section-content h3,
+.proposal-section .section-content h4 {
+    color: var(--orange);
+    margin: 16px 0 8px 0;
+}
+
+/* Compliance Table */
+.compliance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+}
+
+.compliance-table th,
+.compliance-table td {
+    border: 1px solid var(--blue);
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.compliance-table th {
+    background: var(--black);
+    font-weight: 600;
+    color: var(--orange);
+}
+
+.compliance-table tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.compliance-table tr:hover {
+    background: rgba(255, 101, 0, 0.1);
+}
+
+/* Match Badges */
+.match-badge, .score-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.match-badge.high, .score-badge.high {
+    background: rgba(34, 197, 94, 0.2);
+    color: var(--success);
+}
+
+.match-badge.medium, .score-badge.medium {
+    background: rgba(255, 101, 0, 0.2);
+    color: var(--orange);
+}
+
+.match-badge.low, .score-badge.low {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+}
+
+.no-match {
+    color: var(--danger);
+    font-style: italic;
+}
+
+/* Recommendations List */
+.recommendations-list {
+    list-style: none;
+    padding: 0;
+}
+
+.recommendations-list li {
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    background: var(--black);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 6px 6px 0;
+}
+
+/* Proposal Footer */
+.proposal-footer {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 2px solid var(--blue);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-note {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.footer-note i {
+    margin-right: 8px;
+    color: var(--orange);
+}
+
+.footer-summary {
+    display: flex;
+    gap: 16px;
+}
+
+.summary-item {
+    text-align: center;
+    padding: 12px 20px;
+    background: var(--black);
+    border-radius: 8px;
+    border: 1px solid var(--blue);
+}
+
+.summary-label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.summary-value {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--orange);
+}
 .result-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
 
 /* Score Circle */

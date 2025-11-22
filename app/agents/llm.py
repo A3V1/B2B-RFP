@@ -1,32 +1,33 @@
 """
-LLM configuration for agents using Google Gemini directly.
+LLM configuration for agents using OpenRouter API.
+Supports multiple models through a unified interface.
 """
 import os
+import httpx
 from dotenv import load_dotenv
-import google.generativeai as genai
 
 load_dotenv()
 
-# Configure API key globally
-api_key = os.getenv("GOOGLE_API_KEY")
-if api_key:
-    genai.configure(api_key=api_key)
+# OpenRouter configuration
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+# Default model - can be overridden per agent
+DEFAULT_MODEL = "x-ai/grok-4.1-fast:free"
 
 
-class GeminiLLM:
-    """Wrapper for Google Gemini to provide consistent interface."""
+class OpenRouterLLM:
+    """Wrapper for OpenRouter API to provide consistent interface."""
 
-    def __init__(self, model: str = "gemini-2.5-flash-lite", temperature: float = 0.1):
-        self.model_name = model
+    def __init__(self, model: str = DEFAULT_MODEL, temperature: float = 0.1):
+        self.model = model
         self.temperature = temperature
-        self.model = genai.GenerativeModel(
-            model_name=model,
-            generation_config=genai.GenerationConfig(
-                temperature=temperature,
-            )
-        )
+        self.api_key = OPENROUTER_API_KEY
 
-    def invoke(self, messages: list) -> "GeminiResponse":
+        if not self.api_key:
+            raise ValueError("OPENROUTER_API_KEY not found in environment variables")
+
+    def invoke(self, messages: list) -> "LLMResponse":
         """
         Invoke the model with messages.
 
@@ -36,24 +37,65 @@ class GeminiLLM:
         Returns:
             Response object with 'content' attribute
         """
-        # Convert messages to Gemini format
-        prompt_parts = []
+        # Convert messages to OpenRouter format (OpenAI-compatible)
+        formatted_messages = []
         for msg in messages:
             if hasattr(msg, 'content'):
                 content = msg.content
+                # Determine role based on message type
+                if isinstance(msg, SystemMessage):
+                    role = "system"
+                elif isinstance(msg, HumanMessage):
+                    role = "user"
+                else:
+                    role = "user"
             elif isinstance(msg, dict):
                 content = msg.get('content', str(msg))
+                role = msg.get('role', 'user')
             else:
                 content = str(msg)
-            prompt_parts.append(content)
+                role = "user"
 
-        full_prompt = "\n\n".join(prompt_parts)
+            formatted_messages.append({
+                "role": role,
+                "content": content
+            })
 
-        response = self.model.generate_content(full_prompt)
-        return GeminiResponse(response.text)
+        # Make API request
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "http://localhost:8000",  # Required by OpenRouter
+            "X-Title": "B2B-RFP-Analyzer"  # Optional - shows in OpenRouter dashboard
+        }
+
+        payload = {
+            "model": self.model,
+            "messages": formatted_messages,
+            "temperature": self.temperature,
+            "max_tokens": 4096
+        }
+
+        # Use httpx for sync request
+        with httpx.Client(timeout=120.0) as client:
+            response = client.post(
+                OPENROUTER_BASE_URL,
+                headers=headers,
+                json=payload
+            )
+            response.raise_for_status()
+
+            data = response.json()
+
+            # Extract content from response
+            if "choices" in data and len(data["choices"]) > 0:
+                content = data["choices"][0]["message"]["content"]
+                return LLMResponse(content)
+            else:
+                raise ValueError(f"Unexpected response format: {data}")
 
 
-class GeminiResponse:
+class LLMResponse:
     """Response wrapper to match expected interface."""
 
     def __init__(self, content: str):
@@ -77,35 +119,31 @@ class HumanMessage(Message):
     pass
 
 
-def get_llm(temperature: float = 0.1, model: str = "gemini-2.5-flash-lite") -> GeminiLLM:
+def get_llm(temperature: float = 0.1, model: str = DEFAULT_MODEL) -> OpenRouterLLM:
     """
-    Get configured Gemini LLM instance.
+    Get configured OpenRouter LLM instance.
 
     Args:
         temperature: Controls randomness (0.0 = deterministic, 1.0 = creative)
-        model: Gemini model to use
+        model: Model to use (OpenRouter model ID)
 
     Returns:
-        GeminiLLM instance
+        OpenRouterLLM instance
     """
-    if not os.getenv("GOOGLE_API_KEY"):
-        raise ValueError("GOOGLE_API_KEY not found in environment variables")
-
-    return GeminiLLM(model=model, temperature=temperature)
+    return OpenRouterLLM(model=model, temperature=temperature)
 
 
 # Pre-configured instances for different use cases
-# Using gemini-2.5-flash-lite (fast & efficient)
-def get_parser_llm() -> GeminiLLM:
+def get_parser_llm() -> OpenRouterLLM:
     """LLM for parsing - needs accuracy, low temperature."""
-    return get_llm(temperature=0.0, model="gemini-2.5-flash-lite")
+    return get_llm(temperature=0.0, model=DEFAULT_MODEL)
 
 
-def get_analyzer_llm() -> GeminiLLM:
+def get_analyzer_llm() -> OpenRouterLLM:
     """LLM for analysis - balanced."""
-    return get_llm(temperature=0.1, model="gemini-2.5-flash-lite")
+    return get_llm(temperature=0.1, model=DEFAULT_MODEL)
 
 
-def get_response_llm() -> GeminiLLM:
+def get_response_llm() -> OpenRouterLLM:
     """LLM for generating responses - slightly creative."""
-    return get_llm(temperature=0.3, model="gemini-2.5-flash-lite")
+    return get_llm(temperature=0.3, model=DEFAULT_MODEL)

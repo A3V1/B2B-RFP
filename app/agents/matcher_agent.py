@@ -1,16 +1,24 @@
 """
-Matcher Agent: Matches extracted requirements to components in the database.
+Matcher Agent: Matches extracted requirements to OEM products in the database.
 Uses both database queries and LLM for intelligent matching.
+
+Updated for new schema with OEMProduct and JSON specifications.
 """
 import json
 from typing import Dict, Any, List, Optional
 from sqlalchemy import create_engine, or_, and_
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, joinedload
 import os
 from dotenv import load_dotenv
 
 from .llm import get_analyzer_llm, HumanMessage, SystemMessage
 from .state import RFPState, ComponentMatch, RequirementMatch
+from .json_utils import extract_json_from_response
+from .logger import (
+    log_agent_start, log_agent_end, log_step, log_info,
+    log_success, log_error, log_warning, log_llm_call, log_llm_response,
+    log_summary_table, log_section_divider
+)
 
 load_dotenv()
 
@@ -23,107 +31,118 @@ def get_db_session():
     return Session()
 
 
-def query_components_for_requirement(session, specs: dict) -> List[dict]:
+def query_oem_products_for_requirement(session, specs: dict) -> List[dict]:
     """
-    Query database for components matching the given specifications.
-    Uses flexible matching - starts strict, loosens if no results.
+    Query database for OEM products matching the given specifications.
+    Uses flexible matching with JSON specifications.
     """
-    from app.db.models import Component
+    from app.db.models import OEMProduct, ProductPricing
 
-    # Build query based on available specs
-    filters = []
+    # Start with all products, filtered by category if we can determine it
+    query = session.query(OEMProduct).options(
+        joinedload(OEMProduct.manufacturer),
+        joinedload(OEMProduct.pricing)
+    )
 
-    # Voltage matching (exact or close)
+    # Determine category from voltage
     if specs.get("voltage_kv"):
         voltage = specs["voltage_kv"]
-        filters.append(Component.voltage_kv == voltage)
-
-    # Conductor type (exact match)
-    if specs.get("conductor"):
-        conductor = specs["conductor"]
-        filters.append(Component.conductor.ilike(f"%{conductor}%"))
-
-    # Cores (exact match)
-    if specs.get("cores"):
-        cores = specs["cores"]
-        filters.append(Component.cores == cores)
-
-    # Cross section (exact or close)
-    if specs.get("cross_section_mm2"):
-        cs = specs["cross_section_mm2"]
-        filters.append(Component.cross_section_mm2 == cs)
-
-    # Insulation type
-    if specs.get("insulation"):
-        insulation = specs["insulation"]
-        filters.append(Component.insulation.ilike(f"%{insulation}%"))
-
-    # Armour type
-    if specs.get("armour"):
-        armour = specs["armour"]
-        filters.append(Component.armour.ilike(f"%{armour}%"))
-
-    # Try with all filters first
-    if filters:
-        query = session.query(Component).filter(and_(*filters))
-        results = query.limit(10).all()
-
-        if results:
-            return [component_to_dict(c) for c in results]
-
-        # If no results, try with fewer filters (relaxed matching)
-        # Priority: voltage > cross_section > conductor > insulation
-        priority_filters = []
-        if specs.get("voltage_kv"):
-            priority_filters.append(Component.voltage_kv == specs["voltage_kv"])
-        if specs.get("cross_section_mm2"):
-            priority_filters.append(Component.cross_section_mm2 == specs["cross_section_mm2"])
-
-        if priority_filters:
-            query = session.query(Component).filter(and_(*priority_filters))
-            results = query.limit(10).all()
-            if results:
-                return [component_to_dict(c) for c in results]
-
-    # Fallback: get some components from same category
-    if specs.get("voltage_kv"):
-        if specs["voltage_kv"] <= 1.1:
-            category = "LT Cable"
-        elif specs["voltage_kv"] <= 33:
-            category = "HT Cable"
+        if voltage <= 1.1:
+            query = query.filter(OEMProduct.product_category == "LT Cable")
+        elif voltage <= 33:
+            query = query.filter(OEMProduct.product_category == "HT Cable")
         else:
-            category = "EHV Cable"
+            query = query.filter(OEMProduct.product_category == "EHV Cable")
 
-        query = session.query(Component).filter(Component.category == category)
-        results = query.limit(5).all()
-        return [component_to_dict(c) for c in results]
+    # Get all matching products
+    products = query.all()
 
-    return []
+    # Filter and score based on JSON specifications
+    matching_products = []
+    for product in products:
+        product_specs = product.specifications or {}
+
+        # Calculate a basic match score for filtering
+        match_score = 0
+        total_checks = 0
+
+        # Check voltage
+        if specs.get("voltage_kv") and product_specs.get("voltage_kv"):
+            total_checks += 1
+            if product_specs["voltage_kv"] >= specs["voltage_kv"]:
+                match_score += 1
+
+        # Check conductor
+        if specs.get("conductor") and product_specs.get("conductor"):
+            total_checks += 1
+            if specs["conductor"].lower() in product_specs["conductor"].lower():
+                match_score += 1
+
+        # Check cores
+        if specs.get("cores") and product_specs.get("cores"):
+            total_checks += 1
+            if specs["cores"] == product_specs["cores"]:
+                match_score += 1
+
+        # Check cross section
+        if specs.get("cross_section_mm2") and product_specs.get("cross_section_mm2"):
+            total_checks += 1
+            if product_specs["cross_section_mm2"] == specs["cross_section_mm2"]:
+                match_score += 1
+
+        # Check insulation
+        if specs.get("insulation") and product_specs.get("insulation"):
+            total_checks += 1
+            if specs["insulation"].lower() in product_specs["insulation"].lower():
+                match_score += 1
+
+        # Include product if it has any matches or if we have few products
+        if total_checks == 0 or match_score > 0:
+            matching_products.append({
+                "product": product,
+                "preliminary_score": match_score / max(total_checks, 1) * 100
+            })
+
+    # Sort by preliminary score and return top candidates
+    matching_products.sort(key=lambda x: x["preliminary_score"], reverse=True)
+
+    return [oem_product_to_dict(p["product"]) for p in matching_products[:10]]
 
 
-def component_to_dict(component) -> dict:
-    """Convert Component model to dictionary."""
+def oem_product_to_dict(product) -> dict:
+    """Convert OEMProduct model to dictionary."""
+    specs = product.specifications or {}
+    pricing = product.pricing
+
     return {
-        "component_id": component.id,
-        "sku": component.sku,
-        "name": component.name,
-        "category": component.category,
-        "voltage_kv": component.voltage_kv,
-        "conductor": component.conductor,
-        "cores": component.cores,
-        "cross_section_mm2": component.cross_section_mm2,
-        "insulation": component.insulation,
-        "armour": component.armour,
-        "standard": component.standard,
-        "price_per_meter": component.price_per_meter or 0,
-        "in_stock": component.in_stock,
-        "lead_time_days": component.lead_time_days or 0
+        "product_id": product.id,
+        "sku": product.sku,
+        "name": product.product_name,
+        "category": product.product_category,
+        "manufacturer": product.manufacturer.name if product.manufacturer else "Unknown",
+        # Flatten specifications for compatibility
+        "voltage_kv": specs.get("voltage_kv"),
+        "conductor": specs.get("conductor"),
+        "cores": specs.get("cores"),
+        "cross_section_mm2": specs.get("cross_section_mm2"),
+        "insulation": specs.get("insulation"),
+        "armour": specs.get("armour"),
+        "sheath": specs.get("sheath"),
+        "standard": specs.get("standard"),
+        "application": specs.get("application"),
+        # Full specifications JSON
+        "specifications": specs,
+        # Pricing
+        "price_per_meter": pricing.unit_price if pricing else 0,
+        "price_per": pricing.price_per if pricing else "meter",
+        "in_stock": True,  # Default for now
+        "lead_time_days": 7  # Default for now
     }
 
 
-MATCHER_SYSTEM_PROMPT = """You are an expert at matching cable/wire requirements to available products.
+MATCHER_SYSTEM_PROMPT = """You are an expert at matching cable/wire requirements to available OEM products.
 
-Given a requirement and a list of candidate components from the database, score each component's match.
+Given a requirement and a list of candidate OEM products from the database, score each product's match.
 
 Consider these factors for scoring (0-100):
 1. **Voltage Rating** (25 points): Must match or exceed requirement
@@ -137,7 +156,7 @@ Return JSON:
 {
     "scored_matches": [
         {
-            "component_id": 123,
+            "product_id": 123,
             "score": 85,
             "matched_specs": {
                 "voltage_kv": true,
@@ -154,12 +173,12 @@ Return JSON:
     "coverage_score": 85
 }
 
-If no components match well, return empty scored_matches with coverage_score: 0.
+If no products match well, return empty scored_matches with coverage_score: 0.
 """
 
 
 def score_matches_with_llm(requirement: dict, candidates: List[dict]) -> dict:
-    """Use LLM to intelligently score component matches."""
+    """Use LLM to intelligently score product matches."""
     if not candidates:
         return {
             "scored_matches": [],
@@ -173,7 +192,7 @@ def score_matches_with_llm(requirement: dict, candidates: List[dict]) -> dict:
 Requirement: {requirement['description']}
 Specifications: {json.dumps(requirement['specifications'], indent=2)}
 
-Candidate Components:
+Candidate OEM Products:
 {json.dumps(candidates, indent=2)}
 """
 
@@ -185,16 +204,11 @@ Candidate Components:
     try:
         response = llm.invoke(messages)
         response_text = response.content
-
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0]
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0]
-
-        return json.loads(response_text.strip())
+        return extract_json_from_response(response_text)
 
     except Exception as e:
         # Fallback: simple matching without LLM
+        print(f"[Matcher Agent] LLM scoring failed: {e}, using fallback")
         return simple_score_matches(requirement, candidates)
 
 
@@ -256,7 +270,7 @@ def simple_score_matches(requirement: dict, candidates: List[dict]) -> dict:
                 matched["armour"] = False
 
         scored.append({
-            "component_id": comp["component_id"],
+            "product_id": comp["product_id"],
             "score": score,
             "matched_specs": matched,
             "notes": ""
@@ -265,7 +279,7 @@ def simple_score_matches(requirement: dict, candidates: List[dict]) -> dict:
     # Sort by score
     scored.sort(key=lambda x: x["score"], reverse=True)
 
-    best_match_id = scored[0]["component_id"] if scored else None
+    best_match_id = scored[0]["product_id"] if scored else None
     coverage_score = scored[0]["score"] if scored else 0
 
     return {
@@ -277,52 +291,67 @@ def simple_score_matches(requirement: dict, candidates: List[dict]) -> dict:
 
 def matcher_agent(state: RFPState) -> Dict[str, Any]:
     """
-    Match requirements to components in the database.
+    Match requirements to OEM products in the database.
 
     Args:
         state: Current workflow state with requirements
 
     Returns:
-        Updated state with matched components
+        Updated state with matched products
     """
+    log_agent_start("Matcher")
+
     requirements = state.get("requirements", [])
+    log_info("Requirements to match", len(requirements))
 
     if not requirements:
+        log_warning("No requirements to match")
+        log_agent_end("Matcher", success=False)
         return {
             "requirement_matches": [],
             "current_agent": "matcher",
             "errors": ["Matcher Agent: No requirements to match"]
         }
 
+    log_step("Connecting to database...")
     session = get_db_session()
     requirement_matches = []
     errors = []
 
     try:
-        for req in requirements:
-            specs = req.get("specifications", {})
+        for i, req in enumerate(requirements):
+            log_section_divider(f"Requirement {i+1}/{len(requirements)}: {req['id']}")
+            log_info("Description", req['description'][:60] + "...")
 
-            # Query database for candidates
-            candidates = query_components_for_requirement(session, specs)
+            specs = req.get("specifications", {})
+            log_info("Specifications", json.dumps(specs, default=str)[:100])
+
+            # Query database for candidate OEM products
+            log_step("Querying database for candidates...")
+            candidates = query_oem_products_for_requirement(session, specs)
+            log_info("Candidates found", len(candidates))
 
             # Score matches
             if candidates:
+                log_step("Scoring matches with LLM...")
+                log_llm_call("LLM", f"Score {len(candidates)} candidates")
                 match_result = score_matches_with_llm(req, candidates)
 
-                # Build ComponentMatch objects
+                # Build match objects
                 matches = []
                 for scored in match_result.get("scored_matches", []):
-                    # Find the component in candidates
+                    # Find the product in candidates
                     comp = next(
-                        (c for c in candidates if c["component_id"] == scored["component_id"]),
+                        (c for c in candidates if c["product_id"] == scored["product_id"]),
                         None
                     )
                     if comp:
                         matches.append({
-                            "component_id": comp["component_id"],
+                            "product_id": comp["product_id"],
                             "sku": comp["sku"],
                             "name": comp["name"],
                             "category": comp["category"],
+                            "manufacturer": comp["manufacturer"],
                             "score": scored["score"],
                             "matched_specs": scored["matched_specs"],
                             "price_per_meter": comp["price_per_meter"],
@@ -331,15 +360,22 @@ def matcher_agent(state: RFPState) -> Dict[str, Any]:
                         })
 
                 best_match = matches[0] if matches else None
+                coverage = match_result.get("coverage_score", 0)
+
+                if best_match:
+                    log_success(f"Best match: {best_match['name']} (Score: {best_match['score']})")
+                else:
+                    log_warning("No suitable match found")
 
                 requirement_matches.append({
                     "requirement_id": req["id"],
                     "requirement_description": req["description"],
                     "matches": matches,
                     "best_match": best_match,
-                    "coverage_score": match_result.get("coverage_score", 0)
+                    "coverage_score": coverage
                 })
             else:
+                log_warning("No candidates in database")
                 requirement_matches.append({
                     "requirement_id": req["id"],
                     "requirement_description": req["description"],
@@ -349,9 +385,31 @@ def matcher_agent(state: RFPState) -> Dict[str, Any]:
                 })
 
     except Exception as e:
+        log_error(f"Error: {str(e)}")
         errors.append(f"Matcher Agent: {str(e)}")
     finally:
         session.close()
+
+    # Summary
+    log_section_divider("Matching Summary")
+    matched_count = sum(1 for rm in requirement_matches if rm.get("best_match"))
+    log_success(f"Matched {matched_count}/{len(requirements)} requirements")
+
+    if requirement_matches:
+        log_summary_table(
+            ["Req ID", "Best Match", "Score", "Price/m"],
+            [
+                [
+                    rm["requirement_id"],
+                    rm["best_match"]["name"][:25] if rm.get("best_match") else "No match",
+                    rm["best_match"]["score"] if rm.get("best_match") else 0,
+                    f"₹{rm['best_match']['price_per_meter']:.2f}" if rm.get("best_match") else "-"
+                ]
+                for rm in requirement_matches
+            ]
+        )
+
+    log_agent_end("Matcher", success=len(errors) == 0)
 
     return {
         "requirement_matches": requirement_matches,

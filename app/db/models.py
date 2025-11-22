@@ -1,80 +1,246 @@
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, String, Integer, Text, DateTime, func, Float, Boolean
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Column, String, Integer, Text, DateTime, func, Float, Boolean, ForeignKey, JSON
 
 Base = declarative_base()
 
 
+# =============================================================================
+# 1. RFP MANAGEMENT
+# =============================================================================
+
 class RFP(Base):
+    """
+    Stores uploaded RFP documents and their metadata.
+    """
     __tablename__ = "rfps"
-    id = Column(String, primary_key=True, index=True)
-    filename = Column(String, nullable=True)
-    filepath = Column(String, nullable=True)
-    text = Column(Text, nullable=True)
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    rfp_number = Column(String, unique=True, index=True)  # Unique RFP identifier
+    title = Column(String, index=True)
+    issuing_organization = Column(String)
+    due_date = Column(DateTime, nullable=True)
+    status = Column(String, default="uploaded")  # uploaded, processing, completed
+    summary = Column(Text, nullable=True)  # Main Agent's summary
+    document_path = Column(String, nullable=True)  # Path to uploaded RFP document
+    extracted_text = Column(Text, nullable=True)  # Extracted text from document
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    # Relationships
+    products = relationship("RFPProduct", back_populates="rfp", cascade="all, delete-orphan")
+    tests = relationship("RFPTest", back_populates="rfp", cascade="all, delete-orphan")
+    responses = relationship("RFPResponse", back_populates="rfp", cascade="all, delete-orphan")
+
+
+class RFPProduct(Base):
+    """
+    Products required in RFP's Scope of Supply.
+    Extracted from the RFP document.
+    """
+    __tablename__ = "rfp_products"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    rfp_id = Column(Integer, ForeignKey("rfps.id", ondelete="CASCADE"), nullable=False)
+    product_name = Column(String, nullable=False)
+    product_category = Column(String)  # e.g., 'cable', 'connector', etc.
+    quantity = Column(Float, default=1)
+    unit = Column(String, default="units")  # meters, units, km
+    specifications = Column(JSON, nullable=True)  # {"voltage": "1kV", "conductor": "copper", ...}
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    rfp = relationship("RFP", back_populates="products")
+    matches = relationship("ProductMatch", back_populates="rfp_product", cascade="all, delete-orphan")
+
+
+class RFPTest(Base):
+    """
+    Tests/Acceptance criteria required by the RFP.
+    """
+    __tablename__ = "rfp_tests"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    rfp_id = Column(Integer, ForeignKey("rfps.id", ondelete="CASCADE"), nullable=False)
+    test_name = Column(String, nullable=False)
+    test_type = Column(String)  # type_test, routine_test, acceptance_test
+    description = Column(Text, nullable=True)
+    standard_reference = Column(String, nullable=True)  # e.g., 'IEC 60502', 'IS 7098'
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    rfp = relationship("RFP", back_populates="tests")
+
+
+# =============================================================================
+# 2. OEM PRODUCT CATALOG (Technical Agent Repository)
+# =============================================================================
+
+class OEMManufacturer(Base):
+    """
+    OEM Manufacturers in the product catalog.
+    """
+    __tablename__ = "oem_manufacturers"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, unique=True, nullable=False)  # e.g., 'Polycab', 'Havells', 'KEI'
+    website = Column(String, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    products = relationship("OEMProduct", back_populates="manufacturer", cascade="all, delete-orphan")
+
+
+class OEMProduct(Base):
+    """
+    OEM Product datasheets repository.
+    Used by Technical Agent for spec matching.
+    """
+    __tablename__ = "oem_products"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    manufacturer_id = Column(Integer, ForeignKey("oem_manufacturers.id", ondelete="CASCADE"), nullable=False)
+    sku = Column(String, unique=True, index=True, nullable=False)  # Product SKU code
+    product_name = Column(String, index=True)
+    product_category = Column(String, index=True)  # e.g., "LT Cable", "HT Cable", "Control Cable"
+    description = Column(Text, nullable=True)  # Product description
+    specifications = Column(JSON, nullable=True)  # {"voltage": "1.1kV", "conductor": "copper", ...}
+    keywords = Column(String, nullable=True)  # Search keywords separated by semicolons
+    in_stock = Column(Boolean, default=True)  # Stock availability
+    lead_time_days = Column(Integer, default=7)  # Lead time in days
+    datasheet_url = Column(String, nullable=True)
+    datasheet_path = Column(String, nullable=True)  # Local path to downloaded datasheet
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    # Relationships
+    manufacturer = relationship("OEMManufacturer", back_populates="products")
+    pricing = relationship("ProductPricing", back_populates="oem_product", uselist=False, cascade="all, delete-orphan")
+    matches = relationship("ProductMatch", back_populates="oem_product")
+
+
+# =============================================================================
+# 3. PRICING DATA (Pricing Agent)
+# =============================================================================
+
+class ProductPricing(Base):
+    """
+    Pricing table for OEM products.
+    Used by Pricing Agent.
+    """
+    __tablename__ = "product_pricing"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    oem_product_id = Column(Integer, ForeignKey("oem_products.id", ondelete="CASCADE"), nullable=False)
+    unit_price = Column(Float, nullable=False)  # Price per meter
+    price_per_unit = Column(Float, nullable=True)  # Price per unit/drum
+    currency = Column(String, default="INR")
+    price_per = Column(String, default="unit")  # meter, unit, km
+    valid_from = Column(DateTime, nullable=True)
+    valid_until = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    oem_product = relationship("OEMProduct", back_populates="pricing")
+
+
+class TestPricing(Base):
+    """
+    Pricing table for tests/services.
+    Used by Pricing Agent.
+    """
+    __tablename__ = "test_pricing"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    test_name = Column(String, unique=True, index=True, nullable=False)
+    test_category = Column(String)  # electrical, mechanical, thermal, etc.
+    description = Column(Text, nullable=True)
+    price = Column(Float, nullable=False)
+    currency = Column(String, default="INR")
+    price_per = Column(String, default="per_sample")  # per_sample, per_lot, fixed
+    standard_reference = Column(String, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
 
 
-class Component(Base):
+# =============================================================================
+# 4. MATCHING & RESPONSE (Agent Outputs)
+# =============================================================================
+
+class ProductMatch(Base):
     """
-    Enhanced product model for cables/wires with detailed specifications.
-    Used by Technical Agent for spec matching.
+    Technical Agent's product recommendations.
+    Maps RFP products to OEM products with spec match percentage.
     """
-    __tablename__ = "components"
-
-    # Basic info
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    sku = Column(String, unique=True, index=True, nullable=False)
-    name = Column(String, index=True)
-    description = Column(Text)
-    category = Column(String, index=True)  # e.g., "LT Cable", "HT Cable", "Control Cable"
-
-    # Technical specifications
-    voltage_kv = Column(Float, index=True)  # Voltage rating in kV (e.g., 1.1, 11, 33)
-    conductor = Column(String, index=True)  # Copper or Aluminum
-    cores = Column(String)  # e.g., "1C", "2C", "3C", "4C", "3.5C"
-    cross_section_mm2 = Column(Float, index=True)  # Cross-sectional area in mm²
-    insulation = Column(String, index=True)  # PVC, XLPE, EPR, etc.
-    armour = Column(String)  # Unarmoured, SWA (Steel Wire Armour), AWA (Aluminum Wire Armour)
-    sheath = Column(String)  # PVC, LSZH, etc.
-    standard = Column(String)  # IS:1554, IS:7098, IEC, BS, etc.
-
-    # Additional specs
-    application = Column(String)  # Indoor, Outdoor, Underground, Submarine
-    fire_rating = Column(String, nullable=True)  # FR, FRLS, FRLSH
-    temperature_rating = Column(String, nullable=True)  # e.g., "90°C", "110°C"
-
-    # Metadata
-    manufacturer = Column(String, nullable=True)
-    keywords = Column(String)
-
-    # Pricing
-    price_per_meter = Column(Float, default=0.0)  # Price per meter
-    price_per_unit = Column(Float, default=0.0)  # For non-cable items
-    currency = Column(String, default="INR")
-
-    # Availability
-    in_stock = Column(Boolean, default=True)
-    lead_time_days = Column(Integer, default=0)
-
-
-class Test(Base):
-    """
-    Tests and acceptance procedures required for RFPs.
-    Used by Pricing Agent for cost calculation.
-    """
-    __tablename__ = "tests"
+    __tablename__ = "product_matches"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    test_id = Column(String, unique=True, index=True, nullable=False)
-    test_name = Column(String, index=True)
-    category = Column(String, index=True)  # Routine, Type, Special, Acceptance
-    description = Column(Text)
+    rfp_product_id = Column(Integer, ForeignKey("rfp_products.id", ondelete="CASCADE"), nullable=False)
+    oem_product_id = Column(Integer, ForeignKey("oem_products.id", ondelete="CASCADE"), nullable=False)
+    rank = Column(Integer, nullable=False)  # 1, 2, 3 (top 3 recommendations)
+    spec_match_percentage = Column(Float, nullable=False)  # 0-100%
+    spec_comparison = Column(JSON, nullable=True)  # Detailed comparison of each spec
+    is_selected = Column(Boolean, default=False)  # Final selection for response
+    created_at = Column(DateTime, server_default=func.now())
 
-    # Pricing
-    base_price = Column(Float, default=0.0)
-    unit = Column(String)  # per_lot, per_sample, per_km, per_item
+    # Relationships
+    rfp_product = relationship("RFPProduct", back_populates="matches")
+    oem_product = relationship("OEMProduct", back_populates="matches")
+
+
+class RFPResponse(Base):
+    """
+    Final consolidated RFP response.
+    Created by Main Agent after aggregating all agent outputs.
+    """
+    __tablename__ = "rfp_responses"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    rfp_id = Column(Integer, ForeignKey("rfps.id", ondelete="CASCADE"), nullable=False)
+    status = Column(String, default="draft")  # draft, review, final, submitted
+    total_material_cost = Column(Float, default=0.0)
+    total_test_cost = Column(Float, default=0.0)
+    total_cost = Column(Float, default=0.0)
     currency = Column(String, default="INR")
+    response_summary = Column(Text, nullable=True)  # AI-generated response summary
+    created_at = Column(DateTime, server_default=func.now())
+    submitted_at = Column(DateTime, nullable=True)
 
-    # Additional info
-    duration_hours = Column(Integer, nullable=True)  # How long the test takes
-    standard = Column(String, nullable=True)  # IS, IEC, BS standard
-    equipment_required = Column(String, nullable=True)
+    # Relationships
+    rfp = relationship("RFP", back_populates="responses")
+    line_items = relationship("ResponseLineItem", back_populates="rfp_response", cascade="all, delete-orphan")
+    tests = relationship("ResponseTest", back_populates="rfp_response", cascade="all, delete-orphan")
+
+
+class ResponseLineItem(Base):
+    """
+    Line items (products) in the final RFP response.
+    """
+    __tablename__ = "response_line_items"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    rfp_response_id = Column(Integer, ForeignKey("rfp_responses.id", ondelete="CASCADE"), nullable=False)
+    rfp_product_id = Column(Integer, ForeignKey("rfp_products.id", ondelete="SET NULL"), nullable=True)
+    oem_product_id = Column(Integer, ForeignKey("oem_products.id", ondelete="SET NULL"), nullable=True)
+    quantity = Column(Float, default=1)
+    unit_price = Column(Float, default=0.0)
+    total_price = Column(Float, default=0.0)
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    rfp_response = relationship("RFPResponse", back_populates="line_items")
+
+
+class ResponseTest(Base):
+    """
+    Tests included in the final RFP response with pricing.
+    """
+    __tablename__ = "response_tests"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    rfp_response_id = Column(Integer, ForeignKey("rfp_responses.id", ondelete="CASCADE"), nullable=False)
+    rfp_test_id = Column(Integer, ForeignKey("rfp_tests.id", ondelete="SET NULL"), nullable=True)
+    test_name = Column(String, nullable=False)
+    price = Column(Float, default=0.0)
+    created_at = Column(DateTime, server_default=func.now())
+
+    # Relationships
+    rfp_response = relationship("RFPResponse", back_populates="tests")

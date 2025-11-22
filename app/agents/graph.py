@@ -2,6 +2,7 @@
 Main LangGraph workflow for RFP Analysis.
 Orchestrates all agents in a sequential pipeline.
 """
+import time
 from typing import Dict, Any, Optional
 from langgraph.graph import StateGraph, END
 
@@ -11,6 +12,7 @@ from .analyzer_agent import analyzer_agent
 from .matcher_agent import matcher_agent
 from .scorer_agent import scorer_agent
 from .response_agent import response_agent
+from .logger import log_workflow_start, log_workflow_end, log_section_divider
 
 
 def should_continue_after_parser(state: RFPState) -> str:
@@ -107,6 +109,10 @@ async def run_rfp_analysis(rfp_id: str, rfp_text: str) -> Dict[str, Any]:
     Returns:
         Complete analysis results
     """
+    # Log workflow start
+    log_workflow_start(rfp_id)
+    start_time = time.time()
+
     # Initialize state
     initial_state: RFPState = {
         "rfp_id": rfp_id,
@@ -130,10 +136,31 @@ async def run_rfp_analysis(rfp_id: str, rfp_text: str) -> Dict[str, Any]:
     # Run the graph
     final_state = rfp_analysis_graph.invoke(initial_state)
 
+    # Calculate duration
+    duration = time.time() - start_time
+
+    # Determine success
+    has_errors = bool(final_state.get("errors"))
+
+    # Log workflow end
+    log_workflow_end(rfp_id, success=not has_errors, duration=duration)
+
+    # Print final summary
+    log_section_divider("FINAL RESULTS SUMMARY")
+    print(f"    Sections Found: {len(final_state.get('sections', []))}")
+    print(f"    Requirements Extracted: {len(final_state.get('requirements', []))}")
+    print(f"    Requirements Matched: {len([rm for rm in final_state.get('requirement_matches', []) if rm.get('best_match')])}")
+    print(f"    Overall Score: {final_state.get('overall_score', 0)}%")
+    print(f"    Total Duration: {duration:.2f} seconds")
+    if has_errors:
+        print(f"    Errors: {len(final_state.get('errors', []))}")
+        for err in final_state.get('errors', [])[:3]:
+            print(f"      - {err[:80]}...")
+
     # Format results
     return {
         "rfp_id": rfp_id,
-        "status": "completed" if not final_state.get("errors") else "completed_with_errors",
+        "status": "completed" if not has_errors else "completed_with_errors",
         "analysis": {
             "sections_found": len(final_state.get("sections", [])),
             "requirements_extracted": len(final_state.get("requirements", [])),
@@ -157,7 +184,8 @@ async def run_rfp_analysis(rfp_id: str, rfp_text: str) -> Dict[str, Any]:
             "technical": final_state.get("technical_response", ""),
             "commercial": final_state.get("commercial_response", "")
         },
-        "errors": final_state.get("errors", [])
+        "errors": final_state.get("errors", []),
+        "duration_seconds": duration
     }
 
 

@@ -57,6 +57,23 @@
                         <button class="btn btn-primary" id="uploadBtn" disabled onclick="uploadFile()"><i class="fas fa-upload"></i> Upload & Extract</button>
                     </div>
                 </div>
+
+                <!-- Extracted Text Preview Section -->
+                <div class="card hidden" id="extractedTextCard">
+                    <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><i class="fas fa-file-alt"></i> Extracted Text Preview</span>
+                        <span class="text-stats" id="textStats" style="font-size: 12px; color: var(--text-muted);"></span>
+                    </div>
+                    <div id="extractedTextPreview" style="background: var(--black); padding: 16px; border-radius: 8px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 13px; white-space: pre-wrap; line-height: 1.6; color: var(--text);"></div>
+                    <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="color: var(--text-muted); font-size: 13px;">
+                            <i class="fas fa-info-circle"></i> Review the extracted text before proceeding to analysis
+                        </div>
+                        <button class="btn btn-primary" id="proceedBtn" onclick="proceedToAnalysis()">
+                            <i class="fas fa-arrow-right"></i> Proceed to Analysis
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Analyze View -->
@@ -140,18 +157,17 @@
             <div class="view" id="view-proposal">
                 <div class="page-header">
                     <h1 class="page-title">Generated Proposal</h1>
-                    <div style="display: flex; gap: 12px;">
-                        <button class="btn btn-secondary" onclick="exportProposal('txt')"><i class="fas fa-file-alt"></i> Export TXT</button>
-                        <button class="btn btn-primary" onclick="exportProposal('pdf')"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                    <button class="btn btn-primary" onclick="exportProposalPDF()"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                </div>
+
+                <div class="card" id="proposalCard">
+                    <div id="proposalContent" class="proposal-document">
+                        <div style="text-align: center; color: var(--text-muted); padding: 60px;">
+                            <i class="fas fa-file-alt" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                            <div>Run analysis to generate proposal</div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="results-grid">
-                    <div class="card"><div class="card-title"><i class="fas fa-file-signature"></i> Proposal Summary</div><div class="proposal-editor" id="proposalSummary">Run analysis to generate proposal...</div></div>
-                    <div class="card"><div class="card-title"><i class="fas fa-cogs"></i> Technical Response</div><div class="proposal-editor" id="technicalResponse">Run analysis to generate technical response...</div></div>
-                </div>
-
-                <div class="card"><div class="card-title"><i class="fas fa-rupee-sign"></i> Commercial Response</div><div class="proposal-editor" id="commercialResponse">Run analysis to generate commercial response...</div></div>
             </div>
         </main>
     </div>

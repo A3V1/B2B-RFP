@@ -6,6 +6,12 @@ import json
 from typing import Dict, Any, List
 from .llm import get_analyzer_llm, HumanMessage, SystemMessage
 from .state import RFPState
+from .json_utils import extract_json_from_response
+from .logger import (
+    log_agent_start, log_agent_end, log_step, log_info,
+    log_success, log_error, log_warning, log_llm_call, log_llm_response,
+    log_summary_table, log_section_divider
+)
 
 
 SCORER_SYSTEM_PROMPT = """You are an expert at evaluating RFP response quality for electrical cable procurement.
@@ -72,12 +78,18 @@ def scorer_agent(state: RFPState) -> Dict[str, Any]:
     Returns:
         Updated state with scores and recommendations
     """
+    log_agent_start("Scorer")
+
     requirement_matches = state.get("requirement_matches", [])
     requirements = state.get("requirements", [])
     project_summary = state.get("project_summary", "")
     timeline_info = state.get("timeline_info", "")
 
+    log_info("Requirement matches", len(requirement_matches))
+
     if not requirement_matches:
+        log_warning("No matches to score")
+        log_agent_end("Scorer", success=False)
         return {
             "overall_score": 0,
             "scoring_breakdown": {},
@@ -87,6 +99,7 @@ def scorer_agent(state: RFPState) -> Dict[str, Any]:
         }
 
     # Calculate basic stats
+    log_step("Calculating statistics...")
     total_reqs = len(requirement_matches)
     matched_reqs = sum(1 for rm in requirement_matches if rm.get("best_match"))
     avg_coverage = sum(rm.get("coverage_score", 0) for rm in requirement_matches) / total_reqs if total_reqs > 0 else 0
@@ -96,6 +109,12 @@ def scorer_agent(state: RFPState) -> Dict[str, Any]:
         1 for rm in requirement_matches
         if rm.get("best_match") and rm["best_match"].get("in_stock")
     )
+
+    log_section_divider("Pre-Analysis Stats")
+    log_info("Total requirements", total_reqs)
+    log_info("Matched requirements", matched_reqs)
+    log_info("Average coverage", f"{avg_coverage:.1f}%")
+    log_info("In stock", f"{in_stock_count}/{matched_reqs}")
 
     # Prepare summary for LLM
     match_summary = {
@@ -125,6 +144,7 @@ def scorer_agent(state: RFPState) -> Dict[str, Any]:
             }
         match_summary["requirement_details"].append(detail)
 
+    log_step("Initializing LLM for scoring...")
     llm = get_analyzer_llm()
 
     messages = [
@@ -132,26 +152,43 @@ def scorer_agent(state: RFPState) -> Dict[str, Any]:
         HumanMessage(content=f"Evaluate this RFP match:\n\n{json.dumps(match_summary, indent=2)}")
     ]
 
+    log_llm_call(llm.model, "Generate scores and recommendations...")
+
     try:
         response = llm.invoke(messages)
         response_text = response.content
+        log_llm_response(response_text)
 
-        if "```json" in response_text:
-            response_text = response_text.split("```json")[1].split("```")[0]
-        elif "```" in response_text:
-            response_text = response_text.split("```")[1].split("```")[0]
+        log_step("Parsing scoring results...")
+        parsed = extract_json_from_response(response_text)
 
-        parsed = json.loads(response_text.strip())
+        overall_score = parsed.get("overall_score", avg_coverage)
+        recommendations = parsed.get("recommendations", [])
+
+        log_section_divider("Scoring Results")
+        log_success(f"Overall Score: {overall_score}%")
+
+        if recommendations:
+            log_info("Recommendations", "")
+            for i, rec in enumerate(recommendations[:5], 1):
+                print(f"      {i}. {rec[:70]}...")
+
+        log_agent_end("Scorer", success=True)
 
         return {
-            "overall_score": parsed.get("overall_score", avg_coverage),
+            "overall_score": overall_score,
             "scoring_breakdown": parsed.get("scoring_breakdown", {}),
-            "recommendations": parsed.get("recommendations", []),
+            "recommendations": recommendations,
             "current_agent": "scorer",
             "errors": []
         }
 
     except Exception as e:
+        log_error(f"LLM scoring failed: {e}")
+        log_warning("Using fallback scoring...")
+
+        log_agent_end("Scorer", success=False)
+
         # Fallback scoring
         return {
             "overall_score": avg_coverage,

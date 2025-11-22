@@ -16,5 +16,4 @@ reportlab
 # LangGraph for workflow orchestration
 langgraph
 
-# Google Gemini AI
-google-generativeai
+# OpenRouter API (uses httpx - already included above)

@@ -12,8 +12,7 @@ load_dotenv()
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-# Default model - can be overridden per agent
-DEFAULT_MODEL = "x-ai/grok-4.1-fast:free"
+DEFAULT_MODEL = "openrouter/fusion"
 
 
 class OpenRouterLLM:
